@@ -26,8 +26,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create a non-root user for security
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
-USER appuser
+#RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+#USER appuser
 
 # Expose port (Cloud Run will set PORT environment variable)
 EXPOSE 8080
