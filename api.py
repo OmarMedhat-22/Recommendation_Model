@@ -10,16 +10,28 @@ import uuid
 app = FastAPI(title="Product Recommendation API")
 
 # Load the sentence transformer model
-model = SentenceTransformer('all-MiniLM-L6-v2')
+print("Loading sentence transformer model...")
+try:
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    print("✓ Model loaded successfully")
+except Exception as e:
+    print(f"✗ Failed to load model: {e}")
+    raise
 
 # Import configuration for Qdrant cloud
 from config import QDRANT_URL, QDRANT_API_KEY, COLLECTION_NAME
 
 # Connect to Qdrant cloud
-client = QdrantClient(
-    url=QDRANT_URL,
-    api_key=QDRANT_API_KEY,
-)
+print("Connecting to Qdrant cloud...")
+try:
+    client = QdrantClient(
+        url=QDRANT_URL,
+        api_key=QDRANT_API_KEY,
+    )
+    print("✓ Connected to Qdrant cloud")
+except Exception as e:
+    print(f"✗ Failed to connect to Qdrant: {e}")
+    raise
 
 # We're now importing COLLECTION_NAME from config.py
 
@@ -58,6 +70,11 @@ class RecommendationRequest(BaseModel):
 
 class RecommendationResponse(BaseModel):
     recommendations: List[Dict[str, Any]]
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Cloud Run"""
+    return {"status": "healthy", "service": "recommendation-api"}
 
 @app.post("/products/", status_code=201)
 async def add_product(product: Product):
